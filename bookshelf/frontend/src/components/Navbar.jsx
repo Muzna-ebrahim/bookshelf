@@ -11,7 +11,7 @@ const Navbar = ({ user, onLogout }) => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <h1 className="text-2xl font-bold text-blue-600">📚 Bookshelf</h1>
+            <h1 className="text-2xl font-bold text-blue-600">Bookshelf</h1>
             <div className="flex space-x-6">
               <Link
                 to="/"
