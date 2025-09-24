@@ -63,7 +63,7 @@ def create_resource(model, name, required_fields, optional_fields=None):
     
     return ResourceList, ResourceByID
 
-Users, UserByID = create_resource(User, 'User', ['username', 'email'], ['role'])
+Users, UserByID = create_resource(User, 'User', ['username', 'email', 'password'], ['role'])
 Authors, AuthorByID = create_resource(Author, 'Author', ['name'], ['bio', 'birth_year', 'user_id'])
 Categories, CategoryByID = create_resource(Category, 'Category', ['name'], ['description', 'background_image'])
 Reviews, ReviewByID = create_resource(Review, 'Review', ['rating', 'content', 'user_id', 'book_id'])

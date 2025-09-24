@@ -24,14 +24,14 @@ if __name__ == '__main__':
         
         # Create users (admins)
         admin_data = [
-            ('admin1', 'admin1@email.com', 'admin'),
-            ('admin2', 'admin2@email.com', 'admin'),
-            ('reader1', 'reader1@email.com', 'reader')
+            ('admin1', 'admin1@email.com', 'password123', 'admin'),
+            ('admin2', 'admin2@email.com', 'password123', 'admin'),
+            ('reader1', 'reader1@email.com', 'password123', 'reader')
         ]
         
         users = []
-        for username, email, role in admin_data:
-            user = User(username=username, email=email, role=role)
+        for username, email, password, role in admin_data:
+            user = User(username=username, email=email, password=password, role=role)
             users.append(user)
         
         db.session.add_all(users)

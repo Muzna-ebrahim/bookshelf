@@ -3,10 +3,29 @@ import React, { useState, useEffect } from 'react';
 const BookCard = ({ book, category, author, user, onDataChange }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [readingStatus, setReadingStatus] = useState(null);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [reviewContent, setReviewContent] = useState('');
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     loadReadingStatus();
+    loadReviews();
   }, [book.id, user.id]);
+
+  const loadReviews = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/reviews');
+      const allReviews = await response.json();
+      console.log('All reviews:', allReviews);
+      console.log('Book ID:', book.id);
+      const bookReviews = allReviews.filter(r => r.book_id === book.id);
+      console.log('Filtered reviews for this book:', bookReviews);
+      setReviews(bookReviews);
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+    }
+  };
 
   const loadReadingStatus = async () => {
     try {
@@ -63,6 +82,38 @@ const BookCard = ({ book, category, author, user, onDataChange }) => {
     }
   };
 
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const reviewData = {
+        rating: parseInt(rating),
+        content: reviewContent,
+        user_id: user.id,
+        book_id: book.id
+      };
+      console.log('Submitting review:', reviewData);
+      
+      const response = await fetch('http://localhost:5000/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reviewData)
+      });
+      
+      console.log('Response status:', response.status);
+      const result = await response.json();
+      console.log('Response data:', result);
+      
+      if (response.ok) {
+        setShowReviewForm(false);
+        setRating(5);
+        setReviewContent('');
+        loadReviews();
+      }
+    } catch (error) {
+      console.error('Error adding review:', error);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'want_to_read': return 'bg-yellow-500';
@@ -95,6 +146,53 @@ const BookCard = ({ book, category, author, user, onDataChange }) => {
             <div className="text-xs text-gray-500 space-y-1">
               {book.publication_year && <p>Published: {book.publication_year}</p>}
               {book.isbn && <p>ISBN: {book.isbn}</p>}
+            </div>
+            
+            <div className="mt-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Reviews ({reviews.length})</h4>
+              {reviews.slice(0, 2).map(review => (
+                <div key={review.id} className="bg-gray-50 p-2 rounded mb-2">
+                  <div className="flex items-center gap-1 mb-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className={`text-xs ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-600">{review.content}</p>
+                </div>
+              ))}
+              {!showReviewForm ? (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowReviewForm(true); }}
+                  className="text-xs text-blue-500 hover:text-blue-700"
+                >
+                  + Add Review
+                </button>
+              ) : (
+                <form onSubmit={handleReviewSubmit} className="mt-2" onClick={(e) => e.stopPropagation()}>
+                  <div className="mb-2">
+                    <label className="text-xs text-gray-600">Rating:</label>
+                    <select
+                      value={rating}
+                      onChange={(e) => setRating(e.target.value)}
+                      className="ml-2 text-xs border rounded px-1"
+                    >
+                      {[1,2,3,4,5].map(num => <option key={num} value={num}>{num} ★</option>)}
+                    </select>
+                  </div>
+                  <textarea
+                    value={reviewContent}
+                    onChange={(e) => setReviewContent(e.target.value)}
+                    placeholder="Write your review..."
+                    className="w-full text-xs border rounded p-2 mb-2"
+                    rows="2"
+                    required
+                  />
+                  <div className="flex gap-2">
+                    <button type="submit" className="bg-blue-500 text-white px-2 py-1 rounded text-xs">Submit</button>
+                    <button type="button" onClick={() => setShowReviewForm(false)} className="bg-gray-300 px-2 py-1 rounded text-xs">Cancel</button>
+                  </div>
+                </form>
+              )}
             </div>
             
             <div className="mt-4 space-y-2" onClick={(e) => e.stopPropagation()}>

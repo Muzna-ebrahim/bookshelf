@@ -13,25 +13,23 @@ const Auth = ({ onLogin }) => {
     if (isLogin) {
       const response = await fetch('http://localhost:5000/users');
       const users = await response.json();
-      const user = users.find(u => u.username === username);
+      const user = users.find(u => u.username === username && u.password === password);
       
       if (user) {
         onLogin(user);
-      } else {
-        alert('User not found');
       }
     } else {
       const response = await fetch('http://localhost:5000/users', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ username, email, role })
+        body: JSON.stringify({ username, email, password, role })
       });
       
       if (response.ok) {
-        alert('Account created! Please login.');
         setIsLogin(true);
         setUsername('');
         setEmail('');
+        setPassword('');
       }
     }
   };

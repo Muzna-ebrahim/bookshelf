@@ -41,6 +41,7 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), default='reader')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -52,7 +53,7 @@ class User(db.Model, SerializerMixin):
     book_collections = db.relationship('UserBookCollection', back_populates='user', cascade='all, delete-orphan')
     
     # Serialization rules
-    serialize_rules = ('-reviews', '-authors', '-book_collections')
+    serialize_rules = ('-reviews', '-authors', '-book_collections', '-password')
 
 class Author(db.Model, SerializerMixin):
     __tablename__ = 'authors'
