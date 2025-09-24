@@ -1,39 +1,46 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-const Navbar = ({ user, onLogout, onShowAbout }) => {
+const Navbar = ({ user, onLogout }) => {
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="bg-white shadow-lg border-b">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="text-2xl font-bold text-gray-800 hover:text-blue-600">
-            Bookshelf
-          </Link>
-          
-          <div className="flex items-center space-x-6">
-            <Link
-              to="/books"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-            >
-              All Books
-            </Link>
-            <Link
-              to="/categories"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-            >
-              Categories
-            </Link>
-
-            <button
-              onClick={onLogout}
-              className="text-gray-700 hover:text-red-600 font-medium"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
+    <div className="sidebar">
+      <div className="logo">
+        <h1>Bookshelf</h1>
       </div>
-    </nav>
+      <nav className="nav-menu">
+        <Link 
+          to="/" 
+          className={`nav-item ${isActive('/') ? 'active' : ''}`}
+        >
+          Dashboard
+        </Link>
+        <Link 
+          to="/books" 
+          className={`nav-item ${isActive('/books') ? 'active' : ''}`}
+        >
+          Books
+        </Link>
+        <Link 
+          to="/about" 
+          className={`nav-item ${isActive('/about') ? 'active' : ''}`}
+        >
+          About
+        </Link>
+        <button 
+          onClick={onLogout}
+          className="nav-item"
+        >
+          Logout
+        </button>
+      </nav>
+      <div className="user-info">
+        <span>Welcome, {user.username}!</span>
+      </div>
+    </div>
   );
 };
 

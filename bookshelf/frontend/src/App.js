@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
+import Books from './components/Books';
+import About from './components/About';
+import Navbar from './components/Navbar';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -35,14 +39,24 @@ function App() {
     );
   }
 
+  if (!currentUser) {
+    return <Auth onLogin={handleLogin} />;
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {currentUser ? (
-        <Dashboard user={currentUser} onLogout={handleLogout} />
-      ) : (
-        <Auth onLogin={handleLogin} />
-      )}
-    </div>
+    <Router>
+      <div className="app-layout">
+        <Navbar user={currentUser} onLogout={handleLogout} />
+        <div className="main-content">
+          <Routes>
+            <Route path="/" element={<Dashboard user={currentUser} />} />
+            <Route path="/books" element={<Books user={currentUser} />} />
+            <Route path="/about" element={<About />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
 }
 
