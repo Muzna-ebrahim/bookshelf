@@ -6,9 +6,9 @@ A responsive reading platform frontend with category-based visuals and user inte
 
 ```bash
 cd frontend
-npm start
+npm run dev
 ```
-Frontend runs on: http://localhost:3000
+Frontend runs on: http://localhost:5173
 
 ## Project Structure
 ```
