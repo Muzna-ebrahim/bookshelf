@@ -10,27 +10,42 @@ const Auth = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (isLogin) {
-      const response = await fetch('http://localhost:5000/users');
-      const users = await response.json();
-      const user = users.find(u => u.username === username && u.password === password);
-      
-      if (user) {
-        onLogin(user);
+    try {
+      if (isLogin) {
+        const response = await fetch('http://localhost:5000/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username, password })
+        });
+        
+        if (response.ok) {
+          const user = await response.json();
+          onLogin(user);
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Invalid username or password');
+        }
+      } else {
+        const response = await fetch('http://localhost:5000/users', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username, email, password, role })
+        });
+        
+        if (response.ok) {
+          setIsLogin(true);
+          setUsername('');
+          setEmail('');
+          setPassword('');
+          alert('Account created successfully! Please login.');
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to create account');
+        }
       }
-    } else {
-      const response = await fetch('http://localhost:5000/users', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ username, email, password, role })
-      });
-      
-      if (response.ok) {
-        setIsLogin(true);
-        setUsername('');
-        setEmail('');
-        setPassword('');
-      }
+    } catch (error) {
+      console.error('Auth error:', error);
+      alert('Connection error. Please check if the server is running.');
     }
   };
 
