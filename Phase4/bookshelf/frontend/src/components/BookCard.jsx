@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config.js';
 
 const BookCard = ({ book, category, author, user, onDataChange }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -15,7 +16,7 @@ const BookCard = ({ book, category, author, user, onDataChange }) => {
 
   const loadReviews = async () => {
     try {
-      const response = await fetch('http://localhost:5000/reviews');
+      const response = await fetch(`${API_BASE_URL}/reviews`);
       const allReviews = await response.json();
       console.log('All reviews:', allReviews);
       console.log('Book ID:', book.id);
@@ -29,7 +30,7 @@ const BookCard = ({ book, category, author, user, onDataChange }) => {
 
   const loadReadingStatus = async () => {
     try {
-      const response = await fetch('http://localhost:5000/collections');
+      const response = await fetch(`${API_BASE_URL}/collections`);
       const collections = await response.json();
       const userCollection = collections.find(c => c.user_id === user.id && c.book_id === book.id);
       setReadingStatus(userCollection?.status || null);
@@ -42,18 +43,18 @@ const BookCard = ({ book, category, author, user, onDataChange }) => {
     try {
       if (readingStatus) {
         // Update existing status
-        const response = await fetch('http://localhost:5000/collections');
+        const response = await fetch(`${API_BASE_URL}/collections`);
         const collections = await response.json();
         const userCollection = collections.find(c => c.user_id === user.id && c.book_id === book.id);
         
-        await fetch(`http://localhost:5000/collections/${userCollection.id}`, {
+        await fetch(`${API_BASE_URL}/collections/${userCollection.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status })
         });
       } else {
         // Create new collection entry
-        await fetch('http://localhost:5000/collections', {
+        await fetch(`${API_BASE_URL}/collections`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -72,7 +73,7 @@ const BookCard = ({ book, category, author, user, onDataChange }) => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this book?')) {
       try {
-        await fetch(`http://localhost:5000/books/${book.id}`, {
+        await fetch(`${API_BASE_URL}/books/${book.id}`, {
           method: 'DELETE'
         });
         onDataChange();
@@ -93,7 +94,7 @@ const BookCard = ({ book, category, author, user, onDataChange }) => {
       };
       console.log('Submitting review:', reviewData);
       
-      const response = await fetch('http://localhost:5000/reviews', {
+      const response = await fetch(`${API_BASE_URL}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reviewData)

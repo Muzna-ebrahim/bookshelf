@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { API_BASE_URL } from '../config.js';
 
 const AddBookModal = ({ authors, categories, user, onClose, onBookAdded }) => {
   const validationSchema = Yup.object({
@@ -21,7 +22,7 @@ const AddBookModal = ({ authors, categories, user, onClose, onBookAdded }) => {
   });
 
   const handleSubmit = async (values, { resetForm }) => {
-    let authorResponse = await fetch('http://localhost:5000/authors', {
+    let authorResponse = await fetch(`${API_BASE_URL}/authors`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -36,7 +37,7 @@ const AddBookModal = ({ authors, categories, user, onClose, onBookAdded }) => {
     const authorId = author.id;
 
     try {
-      const response = await fetch('http://localhost:5000/books', {
+      const response = await fetch(`${API_BASE_URL}/books`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

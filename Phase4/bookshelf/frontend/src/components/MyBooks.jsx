@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BookCard from './BookCard.jsx';
+import { API_BASE_URL } from '../config.js';
 
 const MyBooks = ({ user }) => {
   const [collections, setCollections] = useState([]);
@@ -15,10 +16,10 @@ const MyBooks = ({ user }) => {
   const loadData = async () => {
     try {
       const [collectionsRes, booksRes, authorsRes, categoriesRes] = await Promise.all([
-        fetch('http://localhost:5000/collections'),
-        fetch('http://localhost:5000/books'),
-        fetch('http://localhost:5000/authors'),
-        fetch('http://localhost:5000/categories')
+        fetch(`${API_BASE_URL}/collections`),
+        fetch(`${API_BASE_URL}/books`),
+        fetch(`${API_BASE_URL}/authors`),
+        fetch(`${API_BASE_URL}/categories`)
       ]);
       
       const allCollections = await collectionsRes.json();

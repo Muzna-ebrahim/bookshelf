@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL, wakeUpServer } from '../config.js';
 
 const Auth = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
+  
+  useEffect(() => {
+    wakeUpServer();
+  }, []);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -12,7 +17,7 @@ const Auth = ({ onLogin }) => {
     
     try {
       if (isLogin) {
-        const response = await fetch('http://localhost:5000/login', {
+        const response = await fetch(`${API_BASE_URL}/login`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ username, password })
@@ -26,7 +31,7 @@ const Auth = ({ onLogin }) => {
           alert(error.error || 'Invalid username or password');
         }
       } else {
-        const response = await fetch('http://localhost:5000/users', {
+        const response = await fetch(`${API_BASE_URL}/users`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ username, email, password, role })
@@ -45,7 +50,7 @@ const Auth = ({ onLogin }) => {
       }
     } catch (error) {
       console.error('Auth error:', error);
-      alert('Connection error. Please check if the server is running.');
+      alert('Login failed. Please check your credentials and try again.');
     }
   };
 
@@ -81,6 +86,8 @@ const Auth = ({ onLogin }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
+            name="username"
+            autocomplete="username"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -90,6 +97,8 @@ const Auth = ({ onLogin }) => {
           
           <input
             type="password"
+            name="password"
+            autocomplete={isLogin ? "current-password" : "new-password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -101,6 +110,8 @@ const Auth = ({ onLogin }) => {
             <>
               <input
                 type="email"
+                name="email"
+                autocomplete="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -108,6 +119,7 @@ const Auth = ({ onLogin }) => {
                 required
               />
               <select
+                name="role"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
