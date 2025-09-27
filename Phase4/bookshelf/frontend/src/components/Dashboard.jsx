@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryGrid from './CategoryGrid.jsx';
 import AddBookModal from './AddBookModal.jsx';
+import { API_BASE_URL } from '../config.js';
 
-const Dashboard = ({ user, onLogout }) => {
+const Dashboard = ({ user, onLogout, onCategorySelect }) => {
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
   const [authors, setAuthors] = useState([]);
@@ -19,8 +20,8 @@ const Dashboard = ({ user, onLogout }) => {
   const loadData = async () => {
     try {
       const [categoriesRes, authorsRes] = await Promise.all([
-        fetch('http://localhost:5000/categories'),
-        fetch('http://localhost:5000/authors')
+        fetch(`${API_BASE_URL}/categories`),
+        fetch(`${API_BASE_URL}/authors`)
       ]);
       
       setCategories(await categoriesRes.json());
@@ -28,8 +29,8 @@ const Dashboard = ({ user, onLogout }) => {
       
       // Load books based on user role
       const booksUrl = user.role === 'admin' ? 
-        `http://localhost:5000/books?admin_id=${user.id}` : 
-        'http://localhost:5000/books';
+        `${API_BASE_URL}/books?admin_id=${user.id}` : 
+        `${API_BASE_URL}/books`;
       const booksRes = await fetch(booksUrl);
       setBooks(await booksRes.json());
     } catch (error) {
@@ -39,6 +40,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const handleCategorySelect = (categoryId) => {
     setCurrentCategory(categoryId);
+    onCategorySelect(categoryId);
     navigate('/books');
   };
 

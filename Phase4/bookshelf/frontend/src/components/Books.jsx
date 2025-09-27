@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import BookGrid from './BookGrid.jsx';
+import { API_BASE_URL } from '../config.js';
 
-const Books = ({ user }) => {
+const Books = ({ user, selectedCategory }) => {
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [authors, setAuthors] = useState([]);
@@ -13,9 +14,9 @@ const Books = ({ user }) => {
   const loadData = async () => {
     try {
       const [booksRes, categoriesRes, authorsRes] = await Promise.all([
-        fetch('http://localhost:5000/books'),
-        fetch('http://localhost:5000/categories'),
-        fetch('http://localhost:5000/authors')
+        fetch(`${API_BASE_URL}/books`),
+        fetch(`${API_BASE_URL}/categories`),
+        fetch(`${API_BASE_URL}/authors`)
       ]);
       
       setBooks(await booksRes.json());
@@ -26,13 +27,17 @@ const Books = ({ user }) => {
     }
   };
 
+  const filteredBooks = selectedCategory 
+    ? books.filter(book => book.category_id === selectedCategory)
+    : books;
+
   return (
     <BookGrid
-      books={books}
+      books={filteredBooks}
       categories={categories}
       authors={authors}
       user={user}
-      onBack={null}
+      onBack={() => window.history.back()}
       onDataChange={loadData}
     />
   );

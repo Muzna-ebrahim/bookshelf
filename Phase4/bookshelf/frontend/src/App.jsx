@@ -10,6 +10,7 @@ import Navbar from './components/Navbar.jsx';
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
@@ -50,8 +51,8 @@ function App() {
         <Navbar user={currentUser} onLogout={handleLogout} />
         <div className="max-w-7xl mx-auto px-4 py-8">
           <Routes>
-            <Route path="/" element={<Dashboard user={currentUser} />} />
-            <Route path="/books" element={<Books user={currentUser} />} />
+            <Route path="/" element={<Dashboard user={currentUser} onCategorySelect={setSelectedCategory} />} />
+            <Route path="/books" element={<Books user={currentUser} selectedCategory={selectedCategory} />} />
             <Route path="/my-books" element={<MyBooks user={currentUser} />} />
             <Route path="/about" element={<About />} />
             <Route path="*" element={<Navigate to="/" />} />
